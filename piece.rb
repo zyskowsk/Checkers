@@ -12,12 +12,13 @@ class Piece
     @king = false
   end
   
-  def can_jump_to?(dir)
-    #is dir in directions?
-    opponent_pos = Piece.adj_pos(@pos, dir)
-    jump_pos = Piece.adj_pos(opponent_pos, dir)
-    #does oppoent_pos contain an opponent?
-    # is jump pos empty ?
+  def can_jump_to?(dir) 
+    opponent_pos = Board.adj_pos(@pos, dir)
+    jump_pos = Board.adj_pos(opponent_pos, dir)
+    @directions.include?(dir) && #is valid dir
+    not @board[opponent_pos].open? && #is piece extact
+    @board[opponent_pos].color != @color && #is opponent extract
+    @board[jump_pos].open?
   end
   
   def destroy
