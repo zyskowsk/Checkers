@@ -30,6 +30,10 @@ class Board
     new_board
   end
   
+  def get_pieces(color)
+    @grid.flatten.select{ |piece| piece.is_a?(Piece) && piece.color == color }
+  end
+  
   def populate_board
     add_pieces(@colors.first)
     add_pieces(@colors.last)
@@ -52,6 +56,11 @@ class Board
     end
          
     num_row + board_string
+  end
+  
+  def won?
+    get_pieces(@colors.first).empty? ||
+    get_pieces(@colors.last).empty?
   end
   
   private
@@ -88,6 +97,14 @@ class Board
         @grid[row].map!.with_index do |_,col|
           next Piece.new(color, self, [row, col]) if (col + row).odd?
           " "
+        end
+      end
+    end
+    
+    def each(&block)
+      @grid.each do |row|
+        row.each do |col|
+          block.call(row, col)
         end
       end
     end
