@@ -57,7 +57,9 @@ class Piece
   end
   
   def preform_moves!(move_sequence)
-    return preform_slide(move_sequence.first) if move_sequence.length == 1
+    if slide_moves.include?(move_sequence.first)
+      return preform_slide(move_sequence.first) 
+    end
     move_sequence.each do |pos|
       preform_jump(pos)
     end
@@ -85,8 +87,9 @@ class Piece
     new_board = @board.dup
     begin
       new_board[@pos].preform_moves!(move_sequence)
-    rescue InvalidMoveError.new => e
+    rescue InvalidMoveError => e
       puts e.message
+      puts new_board
       return false
     else
       return true
