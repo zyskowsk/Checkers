@@ -34,7 +34,7 @@ class Piece
   def preform_jump(pos)
     dir = Board.dir(@pos, pos)
     opponent_piece = @board[Board.adj_pos(@pos, dir)]
-    raise "you cant jump there" unless self.can_jump?(dir)
+    raise InvalidMoveError.new unless self.can_jump?(dir)
     @board[pos] = self
     self.destroy
     opponent_piece.destroy
@@ -42,10 +42,18 @@ class Piece
   end
   
   def preform_slide(pos)
-    raise "you cant slide there!" unless slide_moves.include?(pos)
+    raise InvalidMoveError.new unless slide_moves.include?(pos)
     @board[pos] = self
     self.destroy
     self.pos = pos
+  end
+  
+  def preform_moves(move_sequence)
+    if valid_move_seq?(move_sequence)
+      self.preform_moves!(move_sequence)
+    else
+      raise InvalidMoveError.new
+    end
   end
   
   def preform_moves!(move_sequence)
@@ -77,7 +85,7 @@ class Piece
     new_board = @board.dup
     begin
       new_board[@pos].preform_moves!(move_sequence)
-    rescue RuntimeError => e
+    rescue InvalidMoveError.new => e
       puts e.message
       return false
     else
@@ -85,4 +93,10 @@ class Piece
     end
   end
   
+end
+
+class InvalidMoveError < RuntimeError
+  def initialize(msg = "That is an invalid move")
+    super(msg)
+  end
 end
