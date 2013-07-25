@@ -32,13 +32,14 @@ class Board
   end
   
   def to_s
-    board_string = "-" * 33 + "\n"
-    @grid.each do |row| 
-      board_string <<"| " + row.join(" | ") + " |\n"
-      board_string <<  "-" * 33 + "\n"
+    num_row = "  " + (0...8).to_a.join("   ") + "\n"
+    board_string = " " + "-" * 33 + "\n"
+    @grid.each_with_index do |row, i| 
+      board_string <<"#{i}| " + row.join(" | ") + " |\n"
+      board_string << " " + "-" * 33 + "\n"
     end
          
-    board_string
+    num_row + board_string
   end
   
   private

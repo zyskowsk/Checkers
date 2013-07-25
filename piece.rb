@@ -15,7 +15,7 @@ class Piece
   
   def can_jump?(dir) 
     opponent_pos = Board.adj_pos(@pos, dir)
-    jump_pos = Board.adj_pos(opponent_pos, dir)
+    jump_pos = Board.adj_pos(opponent_pos, dir)  
     @directions.include?(dir) && #is valid dir
     @board.taken?(opponent_pos) && #is piece extact
     @board[opponent_pos].color != @color && #is opponent extract
@@ -50,6 +50,13 @@ class Piece
     @board[pos] = self
     self.destroy
     self.pos = pos
+  end
+  
+  def preform_moves!(move_sequence)
+    return preform_slide(move_sequence.first) if move_sequence.length == 1
+    move_sequence.each do |pos|
+      preform_jump(pos)
+    end
   end
   
   def premote
