@@ -34,16 +34,16 @@ class Piece
     @directions = NORTH + SOUTH
   end
   
-  def to_s
-     return "K".colorize(@color) if king?
-     "O".colorize(@color)   
+  def slide_moves
+    @directions.map do |dir| 
+      Board.adj_pos(@pos, dir) 
+    end.select do |pos|
+      @board.open?(pos)
+    end
   end
   
-  private
-  
-    def self.adj_pos(pos, dir)
-      x, y, dx, dy = pos + dir
-      [x + dx, y + dy]
-    end
-      
+  def to_s
+   return "K".colorize(@color) if king?
+   "O".colorize(@color)   
+  end
 end
