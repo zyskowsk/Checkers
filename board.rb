@@ -56,7 +56,7 @@ class Board
     def self.dir(source, target)
       disp = Board.disp(source, target)
       raise "Not on diagonal" unless disp.first.abs == disp.last.abs
-      magnituted = disp.first.abs
+      magnitude = disp.first.abs
       disp.map { |coord| coord / magnitude }
     end
     
