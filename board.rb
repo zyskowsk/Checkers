@@ -2,10 +2,10 @@ require_relative 'piece'
 
 class Board
 
-  def initialize 
+  def initialize(pieces = true)
     @grid = (0...8).map { |row| [" "] * 8 }
     @colors = [:red, :white]
-    populate_board
+    populate_board if pieces == true
   end
   
   def [](pos)
@@ -16,6 +16,18 @@ class Board
   def []=(pos, piece)
     x, y = pos
     @grid[x][y] = piece
+  end
+  
+  def dup
+    new_board = Board.new(false)
+    
+    each_with_index do |row, i, piece, j|
+      if piece.is_a?(Piece)
+        new_board[[i,j]] = Piece.new(piece.color, new_board, [i, j])
+      end
+    end
+      
+    new_board
   end
   
   def populate_board
@@ -76,6 +88,14 @@ class Board
         @grid[row].map!.with_index do |_,col|
           next Piece.new(color, self, [row, col]) if (col + row).odd?
           " "
+        end
+      end
+    end
+    
+    def each_with_index(&block)
+      @grid.each_with_index do |row, i|
+        row.each_with_index do |col, j|
+          block.call(row, i, col, j)
         end
       end
     end
