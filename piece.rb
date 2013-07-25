@@ -12,7 +12,7 @@ class Piece
     @king = false
   end
   
-  def can_jump?(dir)
+  def can_jump_to?(dir)
     #is dir in directions?
     opponent_pos = Piece.adj_pos(@pos, dir)
     jump_pos = Piece.adj_pos(opponent_pos, dir)

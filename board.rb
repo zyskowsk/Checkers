@@ -49,8 +49,35 @@ class Board
       end
     end
   
+    def self.adj_pos(pos, dir)
+      x, y, dx, dy = pos + dir
+      [x + dx, y + dy]
+    end
+    
+    def self.disp(source, target)
+      s_x, s_y, t_x, t_y = source + target
+      [t_x - s_x, t_y - s_y]
+    end
+    
+    def self.dir(source, target)
+      disp = Board.disp(source, target)
+      raise "Not on diagonal" unless disp.first.abs == disp.last.abs
+      magnituted = disp.first.abs
+      disp.map { |coord| coord / magnitude }
+    end
+    
+    def self.pos_between(source, target)
+      raise "Not 2 appart!" unless Board.two_appart?(source, target)
+      Board.adj_pos(source, dir(source, target))
+    end
+    
+    def self.two_appart?(pos_1, pos_2)
+      Board.disp(pos_1, pos_2).all? { |coor| coor.abs == 2? }
+    end
+  
     def toggle_color
       @colors == :red ? :black : :red
     end
+    
   
 end
