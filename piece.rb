@@ -31,10 +31,6 @@ class Piece
     return SOUTH if @color == :red 
   end
   
-  def jump_moves
-    
-  end
-  
   def preform_jump(pos)
     dir = Board.dir(@pos, pos)
     opponent_piece = @board[Board.adj_pos(@pos, dir)]
@@ -76,4 +72,17 @@ class Piece
    return "K".colorize(@color) if king?
    "O".colorize(@color)   
   end
+  
+  def valid_move_seq?(move_sequence)
+    new_board = @board.dup
+    begin
+      new_board[@pos].preform_moves!(move_sequence)
+    rescue RuntimeError => e
+      puts e.message
+      return false
+    else
+      return true
+    end
+  end
+  
 end
