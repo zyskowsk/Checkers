@@ -14,7 +14,7 @@ class Board
   end
   
   def []=(pos, piece)
-    x, y = [pos]
+    x, y = pos
     @grid[x][y] = piece
   end
   
@@ -24,7 +24,11 @@ class Board
   end
   
   def open?(pos)
-    not self[pos].is_a?(Piece)
+    not taken?(pos)
+  end
+  
+  def taken?(pos)
+    self[pos].is_a?(Piece)
   end
   
   def to_s
@@ -62,7 +66,7 @@ class Board
     end
     
     def self.two_appart?(pos_1, pos_2)
-      Board.disp(pos_1, pos_2).all? { |coor| coor.abs == 2 }
+      Board.disp(pos_1, pos_2).all? { |coord| coord.abs == 2 }
     end
        
     def add_pieces(color)

@@ -1,7 +1,7 @@
 require 'colorize'
 
 class Piece
-  attr_reader :king
+  attr_reader :king, :color
   alias_method :king?, :king
   
   NORTH, SOUTH = [[-1, -1], [-1, 1]], [[1, 1], [1, -1]]
@@ -12,13 +12,13 @@ class Piece
     @king = false
   end
   
-  def can_jump_to?(dir) 
+  def can_jump d?(dir) 
     opponent_pos = Board.adj_pos(@pos, dir)
     jump_pos = Board.adj_pos(opponent_pos, dir)
     @directions.include?(dir) && #is valid dir
-    not @board[opponent_pos].open? && #is piece extact
+    @board.taken?(opponent_pos) && #is piece extact
     @board[opponent_pos].color != @color && #is opponent extract
-    @board[jump_pos].open?
+    @board.open?(jump_pos)
   end
   
   def destroy
