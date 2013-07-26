@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require_relative 'board'
 require_relative 'piece'
 
@@ -82,4 +84,10 @@ class Game
       sleep 0.5
     end
   end
+end
+
+
+if __FILE__ == $PROGRAM_NAME
+  game = Game.new
+  game.run
 end

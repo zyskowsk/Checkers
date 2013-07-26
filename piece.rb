@@ -17,9 +17,9 @@ class Piece
     opponent_pos = Board.adj_pos(@pos, dir)
     jump_pos = Board.adj_pos(opponent_pos, dir)
     @board.on_board?(opponent_pos) &&  
-    @directions.include?(dir) && #is valid dir
-    @board.taken?(opponent_pos) && #is piece extact
-    @board[opponent_pos].color != @color && #is opponent extract
+    @directions.include?(dir) && 
+    @board.taken?(opponent_pos) && 
+    @board[opponent_pos].color != @color && 
     @board.open?(jump_pos)
   end
   
@@ -40,7 +40,7 @@ class Piece
     self.destroy
     opponent_piece.destroy
     self.pos = pos
-    self.promote if @pos.first == promotion_row
+    self.promote if @pos.first == promotion_rowqui
   end
   
   def preform_slide(pos)
@@ -108,4 +108,9 @@ class InvalidMoveError < RuntimeError
   def initialize(msg = "That is an invalid move")
     super(msg)
   end
+end
+
+if __FILE__ == $PROGRAM_NAME
+  game = game.new
+  game.play
 end
