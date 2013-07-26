@@ -15,7 +15,8 @@ class Piece
   
   def can_jump?(dir) 
     opponent_pos = Board.adj_pos(@pos, dir)
-    jump_pos = Board.adj_pos(opponent_pos, dir)  
+    jump_pos = Board.adj_pos(opponent_pos, dir)
+    @board.on_board?(opponent_pos) &&  
     @directions.include?(dir) && #is valid dir
     @board.taken?(opponent_pos) && #is piece extact
     @board[opponent_pos].color != @color && #is opponent extract
@@ -39,6 +40,7 @@ class Piece
     self.destroy
     opponent_piece.destroy
     self.pos = pos
+    self.promote if @pos.first == promotion_row
   end
   
   def preform_slide(pos)
@@ -51,6 +53,7 @@ class Piece
   def preform_moves(move_sequence)
     if valid_move_seq?(move_sequence)
       self.preform_moves!(move_sequence)
+      self.promote if @pos.first == promotion_row
     else
       raise InvalidMoveError.new
     end
@@ -65,16 +68,21 @@ class Piece
     end
   end
   
-  def premote
+  def promote
     @king = true
     @directions = NORTH + SOUTH
   end
   
+  def promotion_row 
+    return 0 if @color == @board.colors.last
+    return 7 if @color == @board.colors.first
+  end
+  
   def slide_moves
     @directions.map do |dir| 
-      Board.adj_pos(@pos, dir) 
+      Board.adj_pos(@pos, dir) # on board
     end.select do |pos|
-      @board.open?(pos)
+      @board.on_board?(pos) && @board.open?(pos) 
     end
   end
   
@@ -88,15 +96,13 @@ class Piece
     begin
       new_board[@pos].preform_moves!(move_sequence)
     rescue InvalidMoveError => e
-      puts e.message
-      puts new_board
       return false
     else
       return true
     end
   end
-  
 end
+
 
 class InvalidMoveError < RuntimeError
   def initialize(msg = "That is an invalid move")

@@ -1,6 +1,7 @@
 require_relative 'piece'
 
 class Board
+  attr_reader :colors
 
   def initialize(pieces = true)
     @grid = (0...8).map { |row| [" "] * 8 }
@@ -24,6 +25,7 @@ class Board
     each_with_index do |row, i, piece, j|
       if piece.is_a?(Piece)
         new_board[[i,j]] = Piece.new(piece.color, new_board, [i, j])
+        new_board[[i,j]].promote if piece.king?
       end
     end
       
@@ -34,9 +36,20 @@ class Board
     @grid.flatten.select{ |piece| piece.is_a?(Piece) && piece.color == color }
   end
   
+  def get_piece(pos, color)
+    unless self[pos].is_a?(Piece) && self[pos].color == color
+      raise InvalidPieceError.new 
+    end
+    self[pos]
+  end
+  
   def populate_board
     add_pieces(@colors.first)
     add_pieces(@colors.last)
+  end
+  
+  def on_board?(pos)
+    pos.all? { |coord| (0...8).include?(coord) }
   end
   
   def open?(pos)
@@ -62,6 +75,10 @@ class Board
     get_pieces(@colors.first).empty? ||
     get_pieces(@colors.last).empty?
   end
+
+  def toggle_color(color)
+    color == @colors.first ? @colors.last : @colors.first
+  end
   
   private
   
@@ -77,9 +94,8 @@ class Board
  
     def self.dir(source, target)
       disp = Board.disp(source, target)
-      raise "Not on diagonal" unless disp.first.abs == disp.last.abs
-      magnitude = disp.first.abs
-      disp.map { |coord| coord / magnitude }
+      mag = disp.first.abs
+      disp.map { |coord| coord / [mag, 1].max }
     end
     
     def self.disp(source, target)
@@ -116,8 +132,10 @@ class Board
         end
       end
     end
-  
-    def toggle_color
-      @colors == :red ? :black : :red
-    end
+end
+
+class InvalidPieceError < RuntimeError
+  def initialize(msg = "That is not one of your pieces")
+    super(msg)
+  end
 end
